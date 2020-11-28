@@ -22,7 +22,7 @@ public class Controller {
 
     @GetMapping("/")
     public String index(){
-        return "apt_rank";
+        return "hyunjin2";
     }
 
 
