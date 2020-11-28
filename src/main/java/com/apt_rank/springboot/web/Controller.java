@@ -22,7 +22,7 @@ public class Controller {
 
     @GetMapping("/")
     public String index(){
-        return "hyunjin12119";
+        return "hyunjin121919";
     }
 
 
