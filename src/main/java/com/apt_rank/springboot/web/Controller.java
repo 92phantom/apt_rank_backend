@@ -10,20 +10,84 @@ import org.json.simple.JSONObject;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@CrossOrigin("*")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/apart")
+//@RequestMapping("/apart")
 public class Controller {
 
     private final AptSearchService aptSearchService;
 
-    @GetMapping("/")
-    public String index(){
-        return "hsysujddainjj12as3";
+    @RequestMapping("/popular")
+    public List<JSONObject> index(@RequestParam("top") int top){
+        List<JSONObject> out = new ArrayList<>();
+        for(int i=1; i<=top; i++){
+
+            JSONObject json = new JSONObject();
+            json.put("apt_name", "시그니엘");
+            json.put("exclusive_area", "12");
+            json.put("serial_num", "11305-4704");
+            json.put("rank", i);
+            json.put("province_nm", "서울특별시");
+            json.put("city_nm", "강북구");
+            json.put("dong_nm", "수유동");
+            json.put("max_trans_price", "10600");
+            out.add(json);
+
+        }
+        return out;
     }
+
+    /*
+        2. 검색
+            2-1. 검색창에서 사용자가 입력했을 때 관련 검색어 노출
+     */
+    @RequestMapping("/search")
+    public String searchAptList(@RequestParam(value = "apt_name") String apt_name,
+                                @RequestParam(value = "related") int related_rank) {
+
+
+        return "hihi";
+    }
+
+    /*
+        2. 검색
+            2-2. 전용 면적 조회
+            2-3. 상세 정보 검색
+     */
+    @RequestMapping("/search/detail")
+    public String searchAptDetail(
+            @RequestParam(value = "serial_num", required = true) String apt_name,
+            @RequestParam(value = "exclusive_area", required = false) int exclusive_area
+            ) {
+
+        if(exclusive_area != 0){
+            return "bye";
+        }
+
+        return "hihi";
+    }
+
+    /*
+        3. 검색 로그 쌓기 : 7일 간 누적순위 log
+     */
+    @RequestMapping(value = "/search/log"
+            , method=RequestMethod.POST)
+    public String searchLog(@ModelAttribute final String requestParam,
+                            HttpServletRequest request) {
+
+
+
+        return "hihi";
+    }
+
+
+
 
 
 //    @GetMapping("/apt")
@@ -64,6 +128,8 @@ public class Controller {
 
         return aptSearchService.findRankByApt_Name(apt_name, region_cd, dong_cd);
     }
+
+
 
 
 }
