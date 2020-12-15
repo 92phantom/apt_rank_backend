@@ -1,28 +1,34 @@
 package com.apt_rank.springboot.web;
 
-import com.apt_rank.springboot.domain.apt.AptRankSearch;
-import com.apt_rank.springboot.domain.apt.AptTransPriceHst;
+import com.apt_rank.springboot.domain.search.AptSearch;
 import com.apt_rank.springboot.service.AptSearchService;
-import com.apt_rank.springboot.web.dto.AptRankDto;
-import com.apt_rank.springboot.web.dto.AptSearchDto;
+import com.apt_rank.springboot.service.ElasticsearchService;
+import com.apt_rank.springboot.service.SearchLogService;
+import com.apt_rank.springboot.web.dto.SearchLogDto;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @CrossOrigin("*")
 @RequiredArgsConstructor
 @RestController
-//@RequestMapping("/apart")
 public class Controller {
 
     private final AptSearchService aptSearchService;
+    private final SearchLogService searchLogService;
+    private final ElasticsearchService elasticsearchService;
 
+    /*  1. 인기 검색어
+            1-1. 인기 검색 상위 10개 아파트 리스트 검색
+            기준 기간 - 14일 누적 검색
+     */
     @RequestMapping("/popular")
     public List<JSONObject> index(@RequestParam("top") int top){
         List<JSONObject> out = new ArrayList<>();
@@ -43,34 +49,86 @@ public class Controller {
         return out;
     }
 
-    /*
-        2. 검색
-            2-1. 검색창에서 사용자가 입력했을 때 관련 검색어 노출
+    /*  2. 검색
+          2-1. 검색창에서 사용자가 입력했을 때 관련 검색어 노출
      */
     @RequestMapping("/search")
-    public String searchAptList(@RequestParam(value = "apt_name") String apt_name,
-                                @RequestParam(value = "related") int related_rank) {
+    public Mono<List<AptSearch>> searchAptList(@RequestParam(value = "apt_name") String apt_name,
+                                               @RequestParam(value = "related") int related_rank) {
 
+        apt_name = apt_name.replaceAll(" ","");
 
-        return "hihi";
+        return elasticsearchService.matchAll(apt_name, related_rank);
     }
 
     /*
         2. 검색
             2-2. 전용 면적 조회
-            2-3. 상세 정보 검색
      */
-    @RequestMapping("/search/detail")
-    public String searchAptDetail(
-            @RequestParam(value = "serial_num", required = true) String apt_name,
-            @RequestParam(value = "exclusive_area", required = false) int exclusive_area
-            ) {
+    @RequestMapping("/search/exclusive")
+    public String searchAptExclusive(
+            @RequestParam(value = "serial_num", required = false) String serial_num,
+            @RequestParam(value = "pr_cd",      required = false) String pr_cd,
+            @RequestParam(value = "ct_cd",      required = false) String ct_cd,
+            @RequestParam(value = "dong_cd",    required = false) String dong_cd,
+            @RequestParam(value = "addr_cd",    required = false) String addr_cd) {
 
-        if(exclusive_area != 0){
-            return "bye";
+        // case 1 (시리얼번호 존재)
+        if(serial_num != null){
+            return "hihi";
         }
 
-        return "hihi";
+        // case 2 (시리얼번호 미존재)
+        else if (   serial_num == null &&
+                    pr_cd   != null &&
+                    ct_cd   != null &&
+                    dong_cd != null &&
+                    addr_cd != null ){
+
+            return "bye";
+        }
+        else{
+            return "error";
+        }
+
+    }
+
+    /*
+        2. 검색
+            2-3. 상세 정보 검색 : exclusive_area 는 빈 값이면 무조건 오류 처리
+    */
+    @RequestMapping("/search/detail")
+    public String searchAptDetail(
+            @RequestParam(value = "serial_num", required = false)   String serial_num,
+            @RequestParam(value = "pr_cd",      required = false)   String pr_cd,
+            @RequestParam(value = "ct_cd",      required = false)   String ct_cd,
+            @RequestParam(value = "dong_cd",    required = false)   String dong_cd,
+            @RequestParam(value = "addr_cd",    required = false)   String addr_cd,
+            @RequestParam(value = "exclusive_area", required = true) int exclusive_area) {
+
+        if(exclusive_area != 0){
+            return "exclusive_area cannot be null";
+        }
+
+        // case 1 (시리얼번호 존재)
+        if(serial_num != null   &&
+                    exclusive_area != 0){
+            return "hihi";
+        }
+
+        // case 2 (시리얼번호 미존재)
+        else if (   serial_num == null &&
+                    pr_cd   != null &&
+                    ct_cd   != null &&
+                    dong_cd != null &&
+                    addr_cd != null &&
+                    exclusive_area != 0){
+
+            return "bye";
+        }
+        else {
+            return "unknown error";
+        }
     }
 
     /*
@@ -78,58 +136,11 @@ public class Controller {
      */
     @RequestMapping(value = "/search/log"
             , method=RequestMethod.POST)
-    public String searchLog(@ModelAttribute final String requestParam,
+    public ResponseEntity<?> searchLog(@ModelAttribute final SearchLogDto requestParam,
                             HttpServletRequest request) {
 
-
-
-        return "hihi";
+        searchLogService.saveSearchLog(requestParam);
+        return new ResponseEntity(HttpStatus.OK);
     }
-
-
-
-
-
-//    @GetMapping("/apt")
-//    @RequestMapping
-//    public List<JSONObject> handleAptName(@RequestParam("apart_name") String apt_name, Model map){
-//        map.addAttribute("msg", "employees request by dept: " + apt_name);
-//
-//        List<JSONObject> out = new ArrayList<>();
-//
-//        for(int i=1; i<3; i++){
-//            JSONObject json = new JSONObject();
-//            json.put("id", 1);
-//            json.put("name", "롯데 시그니엘 "+i+"차");
-//            json.put("address1", "서울시");
-//            json.put("address2", "강동구");
-//            json.put("address3", "천호동");
-//
-//            out.add(json);
-//        }
-//
-//
-//        return out;
-//    }
-
-    @RequestMapping
-    public List<AptSearchDto> handleAptList_Search(@RequestParam("apart_name") String apt_name){
-
-        return aptSearchService.findByAptName(apt_name);
-    }
-
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public AptRankDto handleAptName_dup(@RequestParam("apart_name") String apt_name,
-                                        @RequestParam("rc") String region_cd,
-                                        @RequestParam("dc") String dong_cd){
-
-        // 검색된 아파트 정보는 ranking 테이블에 쌓는 로직 필요
-        // 저장해뒀다가 한번에 처리하는 방식으로
-
-        return aptSearchService.findRankByApt_Name(apt_name, region_cd, dong_cd);
-    }
-
-
-
 
 }

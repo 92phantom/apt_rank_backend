@@ -1,6 +1,7 @@
 buildscript{
     ext{
         springBootVersion = '2.1.7.RELEASE'
+        set('elasticsearch.version', '7.10.0')
     }
     repositories{
         mavenCentral()
@@ -28,16 +29,27 @@ repositories {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-webflux')
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
 
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    // Elastic Search
+    compile ("org.elasticsearch.client:elasticsearch-rest-high-level-client:${property('elasticsearch.version')}")
+    compile ("org.elasticsearch.client:elasticsearch-rest-client:${property('elasticsearch.version')}")
+    compile ("org.elasticsearch:elasticsearch:${property('elasticsearch.version')}")
+    compile('com.google.code.gson:gson:2.8.2')
 
     // JDBC
     compile('org.springframework.session:spring-session-jdbc')
     compile('mysql:mysql-connector-java:5.1.46')
     compile ('org.springframework.boot:spring-boot-starter-data-jpa')
     compile ('com.h2database:h2')
+
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' // MariaDB
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+
+
+
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
