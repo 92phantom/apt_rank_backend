@@ -5,6 +5,7 @@ import com.apt_rank.springboot.service.AptSearchService;
 import com.apt_rank.springboot.service.ElasticsearchService;
 import com.apt_rank.springboot.service.SearchLogService;
 import com.apt_rank.springboot.web.dto.SearchLogDto;
+import com.apt_rank.springboot.web.dto.TopRankDto;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -30,23 +31,25 @@ public class Controller {
             기준 기간 - 14일 누적 검색
      */
     @RequestMapping("/popular")
-    public List<JSONObject> index(@RequestParam("top") int top){
-        List<JSONObject> out = new ArrayList<>();
-        for(int i=1; i<=top; i++){
+    public List<TopRankDto> index(@RequestParam("top") int top){
+//        List<JSONObject> out = new ArrayList<>();
+//        for(int i=1; i<=top; i++){
+//
+//            JSONObject json = new JSONObject();
+//            json.put("apt_name", "시그니엘");
+//            json.put("exclusive_area", "12");
+//            json.put("serial_num", "11305-4704");
+//            json.put("rank", i);
+//            json.put("province_nm", "서울특별시");
+//            json.put("city_nm", "강북구");
+//            json.put("dong_nm", "수유동");
+//            json.put("max_trans_price", "10600");
+//            out.add(json);
+//
+//        }
+//        return out;
 
-            JSONObject json = new JSONObject();
-            json.put("apt_name", "시그니엘");
-            json.put("exclusive_area", "12");
-            json.put("serial_num", "11305-4704");
-            json.put("rank", i);
-            json.put("province_nm", "서울특별시");
-            json.put("city_nm", "강북구");
-            json.put("dong_nm", "수유동");
-            json.put("max_trans_price", "10600");
-            out.add(json);
-
-        }
-        return out;
+        return searchLogService.searchTopRank(top);
     }
 
     /*  2. 검색
