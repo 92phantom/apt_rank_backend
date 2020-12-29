@@ -1,20 +1,18 @@
 package com.apt_rank.springboot.web;
 
 import com.apt_rank.springboot.domain.search.AptSearch;
+import com.apt_rank.springboot.domain.search.projection.TopRankInterface;
 import com.apt_rank.springboot.service.AptSearchService;
 import com.apt_rank.springboot.service.ElasticsearchService;
 import com.apt_rank.springboot.service.SearchLogService;
 import com.apt_rank.springboot.web.dto.SearchLogDto;
-import com.apt_rank.springboot.web.dto.TopRankDto;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -31,25 +29,9 @@ public class Controller {
             기준 기간 - 14일 누적 검색
      */
     @RequestMapping("/popular")
-    public List<TopRankDto> index(@RequestParam("top") int top){
-//        List<JSONObject> out = new ArrayList<>();
-//        for(int i=1; i<=top; i++){
-//
-//            JSONObject json = new JSONObject();
-//            json.put("apt_name", "시그니엘");
-//            json.put("exclusive_area", "12");
-//            json.put("serial_num", "11305-4704");
-//            json.put("rank", i);
-//            json.put("province_nm", "서울특별시");
-//            json.put("city_nm", "강북구");
-//            json.put("dong_nm", "수유동");
-//            json.put("max_trans_price", "10600");
-//            out.add(json);
-//
-//        }
-//        return out;
+    public List<TopRankInterface> index(@RequestParam("top") int top){
 
-        return searchLogService.searchTopRank(top);
+        return (List<TopRankInterface>) searchLogService.searchTopRank(top);
     }
 
     /*  2. 검색
@@ -142,8 +124,15 @@ public class Controller {
     public ResponseEntity<?> searchLog(@ModelAttribute final SearchLogDto requestParam,
                             HttpServletRequest request) {
 
-        searchLogService.saveSearchLog(requestParam);
-        return new ResponseEntity(HttpStatus.OK);
+        boolean save_flag = searchLogService.saveSearchLog(requestParam);
+
+        if(save_flag){
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity(HttpStatus.ALREADY_REPORTED);
+        }
+
     }
 
 }

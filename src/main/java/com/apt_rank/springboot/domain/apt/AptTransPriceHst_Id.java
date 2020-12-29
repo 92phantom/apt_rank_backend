@@ -5,13 +5,15 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @Embeddable
 public class AptTransPriceHst_Id implements Serializable {
 
-    private String name;
-    private String region_cd;
-    private String dong_cd;
+    private String serial_num;
+    private String trans_price;
+    private Date audit_dtm;
+    private String trans_yymmdd;
 
 }

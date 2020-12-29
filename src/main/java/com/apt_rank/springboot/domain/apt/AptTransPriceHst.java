@@ -3,6 +3,7 @@ package com.apt_rank.springboot.domain.apt;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @NoArgsConstructor
@@ -12,25 +13,58 @@ import javax.persistence.*;
 public class AptTransPriceHst {
 
     @Id
-    @Column(length=40, nullable = false, name = "name")
-    private String name;
+    @Column(length=30, nullable = true)
+    private String serial_num;
+
     @Id
-    @Column(length=5, nullable = false, name = "region_cd")
-    private String region_cd;
+    @Column(length = 20, nullable = false)
+    private int trans_price;
+
     @Id
-    @Column(length=5, nullable = false, name = "dong_cd")
-    private String dong_cd;
+    @Column(nullable = false)
+    private Date audit_dtm;
 
-    @Column(length=20, nullable = true, name = "id")
-    private String id;
+    @Id
+    @Column(length=30, nullable = false)
+    private String trans_yymmdd;
 
-    @Column(length=20, nullable = true, name = "address_1")
-    private String address_1;
+    @Column(length=30, nullable = false)
+    private String apt_name;
 
-    @Column(length=20, nullable = true, name = "address_2")
-    private String address_2;
+    @Column(length=30)
+    private String apt_floor;
 
-    @Column(length=20, nullable = true, name = "address_3")
-    private String address_3;
+    @Column(length=30)
+    private String apt_capacity;
+
+    @Column(length=30)
+    private String apt_build_yy;
+
+    @Column(length=30)
+    private String trans_yymm;
+
+    @Column(length=30)
+    private String addr_cd;
+
+    @Column(length=30)
+    private String addr_pr_cd;
+
+    @Column(length=30)
+    private String addr_ct_cd;
+
+    @Column(length=30)
+    private String addr_dong_cd;
+
+    @Column(length=30)
+    private String addr_dong_nm;
+
+    @Column(length=30)
+    private String audit_id;
+
+    @Column(length=30)
+    private String trans_dd;
+
+    @Column(length=20)
+    private int unit_price;
 
 }

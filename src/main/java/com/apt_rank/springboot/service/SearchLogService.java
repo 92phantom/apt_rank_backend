@@ -1,8 +1,9 @@
 package com.apt_rank.springboot.service;
 
+import com.apt_rank.springboot.domain.search.SearchLog;
 import com.apt_rank.springboot.domain.search.SearchLogRepository;
+import com.apt_rank.springboot.domain.search.projection.TopRankInterface;
 import com.apt_rank.springboot.web.dto.SearchLogDto;
-import com.apt_rank.springboot.web.dto.TopRankDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,32 +16,41 @@ public class SearchLogService {
 
     private final SearchLogRepository searchLogRepository;
 
-    public List<TopRankDto> searchTopRank(int topRank){
+    public Object searchTopRank(int topRank){
 
+        // top rank 10위 외에는 조회 불가
+        // 조회 기준 : 7일 누적
         if(topRank == 10) {
+
             return searchLogRepository.findByTopRank(topRank);
         }
         else{
-            return (List<TopRankDto>) new TopRankDto();
+            return null;
         }
 
     }
 
-    public void saveSearchLog(SearchLogDto param){
-        SearchLogDto searchlog = new SearchLogDto(searchLogRepository
-                        .findByIp_Port(param.getClient_ip(), param.getPort()));
+    public boolean saveSearchLog(SearchLogDto param){
+        List<SearchLog> searchlog ;
+        /*  검색 저장 이력이 없는 대상 */
 
-        /*
-         *   검색 저장 이력이 없는 대상
-         */
+        try {
+            searchlog = searchLogRepository
+                    .findByIp_Port(param.getClient_ip(), param.getPort(), param.getSerial_num(), param.getExclusive_area());
 
-        if(searchlog == null){
-            searchLogRepository.save(param.toEntity());
+            if(searchlog.size() == 0){
+                searchLogRepository.save(param.toEntity());
+                return true;
+            } else{
+                return false;
+            }
+
+        } catch(Exception e){
+            e.printStackTrace();
+            return false;
         }
-        else{
-            // 7시간에 한번
-            System.out.println("@@@"+searchlog.getAudit_dtm());
-        }
+
+
     }
 
 }
