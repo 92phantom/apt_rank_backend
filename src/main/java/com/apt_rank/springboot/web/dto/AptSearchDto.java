@@ -3,31 +3,33 @@ package com.apt_rank.springboot.web.dto;
 import com.apt_rank.springboot.domain.apt.AptTransPriceHst;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
 
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class AptSearchDto {
 
-//    private String name;
-//    private String region_cd;
-//    private String dong_cd;
-//    private String id;
-//    private String address_1;
-//    private String address_2;
-//    private String address_3;
-//
-//    // 가격정보 및 구&동 정보 갱신 필요
-//    public AptSearchDto(AptTransPriceHst entity){
-//        this.name      = entity.getName     ();
-//        this.region_cd = entity.getRegion_cd();
-//        this.dong_cd   = entity.getDong_cd  ();
-//        this.id        = entity.getId       ();
-//        this.address_1 = entity.getAddress_1();
-//        this.address_2 = entity.getAddress_2();
-//        this.address_3 = entity.getAddress_3();
-//        if(this.address_3.contains(" ")){
-//            this.address_3 = this.address_3.replaceAll(" ", "");
-//        }
-//    }
+    private String wide_top_nm;
+    private String wide_top_serial_num;
+    private int wide_my_rank;
+    private String wide_my_tier;
+    private String wide_pr_cd;
+    private String wide_ct_cd;
+    private String wide_dong_cd;
+    private String wide_addr_cd;
+
+    private String local_top_nm;
+    private String local_top_serial_num;
+    private String local_top_pr_cd;
+    private String local_top_ct_cd;
+    private String local_top_dong_cd;
+    private String local_top_addr_cd;
+    private int local_my_rank;
+    private String local_my_tier;
+
+    private List<MyAptDto> my_apt_dtl;
 
 }

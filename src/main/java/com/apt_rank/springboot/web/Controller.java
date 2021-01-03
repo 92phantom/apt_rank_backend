@@ -1,10 +1,12 @@
 package com.apt_rank.springboot.web;
 
+import com.apt_rank.springboot.domain.apt.projection.ExclusiveInterface;
 import com.apt_rank.springboot.domain.search.AptSearch;
 import com.apt_rank.springboot.domain.search.projection.TopRankInterface;
 import com.apt_rank.springboot.service.AptSearchService;
 import com.apt_rank.springboot.service.ElasticsearchService;
 import com.apt_rank.springboot.service.SearchLogService;
+import com.apt_rank.springboot.web.dto.AptSearchDto;
 import com.apt_rank.springboot.web.dto.SearchLogDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,7 +53,7 @@ public class Controller {
             2-2. 전용 면적 조회
      */
     @RequestMapping("/search/exclusive")
-    public String searchAptExclusive(
+    public List<?> searchAptExclusive(
             @RequestParam(value = "serial_num", required = false) String serial_num,
             @RequestParam(value = "pr_cd",      required = false) String pr_cd,
             @RequestParam(value = "ct_cd",      required = false) String ct_cd,
@@ -60,7 +62,7 @@ public class Controller {
 
         // case 1 (시리얼번호 존재)
         if(serial_num != null){
-            return "hihi";
+            return aptSearchService.findExclusiveBySerialNum(serial_num);
         }
 
         // case 2 (시리얼번호 미존재)
@@ -69,12 +71,10 @@ public class Controller {
                     ct_cd   != null &&
                     dong_cd != null &&
                     addr_cd != null ){
+            return aptSearchService.findExclusiveByAddrCd(pr_cd, ct_cd, dong_cd, addr_cd);
+        }
 
-            return "bye";
-        }
-        else{
-            return "error";
-        }
+        return null;
 
     }
 
@@ -83,7 +83,7 @@ public class Controller {
             2-3. 상세 정보 검색 : exclusive_area 는 빈 값이면 무조건 오류 처리
     */
     @RequestMapping("/search/detail")
-    public String searchAptDetail(
+    public AptSearchDto searchAptDetail(
             @RequestParam(value = "serial_num", required = false)   String serial_num,
             @RequestParam(value = "pr_cd",      required = false)   String pr_cd,
             @RequestParam(value = "ct_cd",      required = false)   String ct_cd,
@@ -92,13 +92,14 @@ public class Controller {
             @RequestParam(value = "exclusive_area", required = true) int exclusive_area) {
 
         if(exclusive_area != 0){
-            return "exclusive_area cannot be null";
+            return null;
         }
 
         // case 1 (시리얼번호 존재)
         if(serial_num != null   &&
                     exclusive_area != 0){
-            return "hihi";
+
+            return aptSearchService.findAptDetailBySerialNum(serial_num, exclusive_area);
         }
 
         // case 2 (시리얼번호 미존재)
@@ -109,10 +110,11 @@ public class Controller {
                     addr_cd != null &&
                     exclusive_area != 0){
 
-            return "bye";
+            return aptSearchService.findAptDetailByAddrCd(pr_cd, ct_cd, dong_cd, addr_cd, exclusive_area);
+
         }
         else {
-            return "unknown error";
+            return null;
         }
     }
 
