@@ -4,13 +4,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class TransHstDto {
+public class AptExclusiveDto {
 
-    private String floor;
-    private String trans_yymmdd;
-    private String trans_price;
+    private List<Integer> exclusive_area;
 
 }

@@ -30,6 +30,6 @@ public class AptSearchDto {
     private int local_my_rank;
     private String local_my_tier;
 
-    private List<MyAptDto> my_apt_dtl;
+    private MyAptDto my_apt_dtl;
 
 }

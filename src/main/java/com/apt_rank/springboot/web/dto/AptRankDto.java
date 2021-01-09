@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AptRankDto {
 
+    /*
     public enum RankType{
      /*
         CALCULATE RANKING
@@ -18,6 +19,8 @@ public class AptRankDto {
         상위 30% : SILVER
         나머지 : BRONZE
      */
+
+    /*
         TOP5PER("DIA"),
         TOP10PER("PLATINUM"),
         TOP20PER("GOLD"),
@@ -35,6 +38,8 @@ public class AptRankDto {
         }
     }
 
+     */
+/*
     // 변환 대상
     private String gu_tier;
     private String k_tier;
@@ -130,4 +135,5 @@ public class AptRankDto {
 
     }
 
+    */
 }

@@ -33,7 +33,6 @@ public interface AptRankRepository extends JpaRepository<AptRankSearch, String> 
             "GROUP BY addr_pr_cd, addr_ct_cd, addr_dong_cd, addr_cd", nativeQuery = true)
     AptDetail findAddrCdBySerialNum(String serial_num);
 
-
     // 전국에서 내 랭킹
     @Query(value = "SELECT *\n" +
             "FROM apt_trans_rank atr\n" +
@@ -49,10 +48,10 @@ public interface AptRankRepository extends JpaRepository<AptRankSearch, String> 
     // 지역구 내 랭킹
     @Query(value = "SELECT main_q.*\n" +
             "FROM (\n" +
-            "\tSELECT  @ROWNUM := @ROWNUM +1 AS local_rank, t.*\n" +
+            "\tSELECT  @ROWNUM \\:= @ROWNUM +1 AS local_rank, t.*\n" +
             "\tFROM (\n" +
             "\t\tSELECT *\n" +
-            "\t\tFROM apt_trans_rank atr, (select @ROWNUM := 0 ) tmp\n" +
+            "\t\tFROM apt_trans_rank atr, (select @ROWNUM \\:= 0 ) tmp\n" +
             "\t\tWHERE op_dt = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d')\n" +
             "\t\t\tAND atr.addr_pr_cd = ?1 \n" +
             "\t\t\tAND atr.addr_ct_cd = ?2\n" +
@@ -60,9 +59,9 @@ public interface AptRankRepository extends JpaRepository<AptRankSearch, String> 
             "\t\tORDER BY atr.unit_price desc\n" +
             "\t\t) t\n" +
             "\t) main_q\n" +
-            "WHERE (main_q.local_rank = 1 OR \n" +
+            "WHERE (main_q.local_rank = \"1\" OR \n" +
             "\t(main_q.addr_cd = ?4 AND main_q.exclusive_area = ?5))", nativeQuery = true)
-    List<AptDetail> findLocalRankByAddrCd(String pr_cd, String ct_cd, String dong_cd, String addr_cd, int exclusive_area);
+    List<AptDetail> findLocalRankByAddrCd(String addr_pr_cd, String ct_cd, String dong_cd, String addr_cd, int exclusive_area);
 
     // 전국 아파트 개수
     @Query(value = "SELECT count(1) as wide_apt_cnt\n" +

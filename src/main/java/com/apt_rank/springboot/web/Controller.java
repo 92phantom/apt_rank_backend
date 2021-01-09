@@ -6,9 +6,11 @@ import com.apt_rank.springboot.domain.search.projection.TopRankInterface;
 import com.apt_rank.springboot.service.AptSearchService;
 import com.apt_rank.springboot.service.ElasticsearchService;
 import com.apt_rank.springboot.service.SearchLogService;
+import com.apt_rank.springboot.web.dto.AptExclusiveDto;
 import com.apt_rank.springboot.web.dto.AptSearchDto;
 import com.apt_rank.springboot.web.dto.SearchLogDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +45,8 @@ public class Controller {
     public Mono<List<AptSearch>> searchAptList(@RequestParam(value = "apt_name") String apt_name,
                                                @RequestParam(value = "related") int related_rank) {
 
+        System.out.println("###"+ apt_name);
+
         apt_name = apt_name.replaceAll(" ","");
 
         return elasticsearchService.matchAll(apt_name, related_rank);
@@ -53,7 +57,7 @@ public class Controller {
             2-2. 전용 면적 조회
      */
     @RequestMapping("/search/exclusive")
-    public List<?> searchAptExclusive(
+    public AptExclusiveDto searchAptExclusive(
             @RequestParam(value = "serial_num", required = false) String serial_num,
             @RequestParam(value = "pr_cd",      required = false) String pr_cd,
             @RequestParam(value = "ct_cd",      required = false) String ct_cd,
@@ -91,7 +95,12 @@ public class Controller {
             @RequestParam(value = "addr_cd",    required = false)   String addr_cd,
             @RequestParam(value = "exclusive_area", required = true) int exclusive_area) {
 
-        if(exclusive_area != 0){
+
+        System.out.println("hihi");
+
+        System.out.println("#"+exclusive_area);
+
+        if(exclusive_area == 0){
             return null;
         }
 
@@ -99,6 +108,7 @@ public class Controller {
         if(serial_num != null   &&
                     exclusive_area != 0){
 
+            System.out.println("here we go");
             return aptSearchService.findAptDetailBySerialNum(serial_num, exclusive_area);
         }
 
