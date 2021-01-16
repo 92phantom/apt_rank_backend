@@ -1,22 +1,18 @@
 package com.apt_rank.springboot.web;
 
-import com.apt_rank.springboot.domain.apt.projection.ExclusiveInterface;
+import com.apt_rank.springboot.domain.apt.AptSubsSpc;
 import com.apt_rank.springboot.domain.search.AptSearch;
 import com.apt_rank.springboot.domain.search.projection.TopRankInterface;
-import com.apt_rank.springboot.service.AptSearchService;
-import com.apt_rank.springboot.service.ElasticsearchService;
-import com.apt_rank.springboot.service.SearchLogService;
-import com.apt_rank.springboot.web.dto.AptExclusiveDto;
-import com.apt_rank.springboot.web.dto.AptSearchDto;
-import com.apt_rank.springboot.web.dto.SearchLogDto;
+import com.apt_rank.springboot.service.*;
+import com.apt_rank.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -27,6 +23,9 @@ public class Controller {
     private final AptSearchService aptSearchService;
     private final SearchLogService searchLogService;
     private final ElasticsearchService elasticsearchService;
+    private final AptScheduleService aptScheduleService;
+    private final AptCalculatorService aptCalculatorService;
+
 
     /*  1. 인기 검색어
             1-1. 인기 검색 상위 10개 아파트 리스트 검색
@@ -147,4 +146,74 @@ public class Controller {
 
     }
 
+    /*
+        4. 지역별 분석
+            4-1. 지역구 아파트 가격 변화
+     */
+    @RequestMapping(value = "/analysis")
+    public PriceAnalysisDto analysisArea(@RequestParam(value = "range" , required = true)   String range,
+                                         @RequestParam(value = "year"  , required = true)   String year){
+
+
+    }
+
+
+    /*
+        4. 지역별 분석
+            4-2. 현재 거래량 많은 아파트
+     */
+
+    @RequestMapping(value = "/analysis/volume")
+    public List<TopRankInterface> analysisPrice(@RequestParam(value = "range" , required = true)   String range,
+                                      @RequestParam(value = "related"  , required = true)   String related){
+
+
+    }
+
+    /*
+        5. 청약캘린더
+     */
+
+    @RequestMapping(value = "/schedule")
+    public List<AptSubsSpc> scheduleCalendar(@RequestParam(value = "date") String date,
+                @RequestParam(value = "type") String type){
+        // 일자별로 조회될수 있도록 조건 추가
+        return aptScheduleService.findScheduleByInqirePd(date);
+    }
+
+    /*
+        6. 대출 계산기
+     */
+    @RequestMapping(value = "/calculator")
+    public LoanDto loanCalculator(@RequestParam(value = "type", required = true) String type,
+                                  @RequestParam(value = "principal", required = true) long principal,
+                                  @RequestParam(value = "interest", required = true) double interest,
+                                  @RequestParam(value = "period", required = true) int period
+                                  ){
+        /*
+            대출 Type
+            01 - 원금 균등상환
+            02 - 원리금 균등상환
+            03 - 만기일시상환
+         */
+
+        interest = interest * 0.01;
+
+        if(type.equals("01")){
+
+            return aptCalculatorService.equivalencePrincipal(principal, interest, period);
+        }
+        else if(type.equals("02")) {
+
+            return aptCalculatorService.equivalencePrincipalAndInterest(principal, interest, period);
+        }
+        else if(type.equals("03")){
+
+            return aptCalculatorService.bullet(principal, interest, period);
+
+        }
+
+        return new LoanDto();
+
+    }
 }
