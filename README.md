@@ -68,3 +68,9 @@ GET apt_search/_search
   }
 }
 
+# maria db status check
+systemctl status mariadb
+
+# maria db restart and check status
+systemctl daemon-reload
+systemctl start mariadb
