@@ -1,5 +1,8 @@
 # elasticsearch index
 
+# nori 형태소 분석기 설치
+bin/elasticsearch-plugin install analysis-nori
+
 # create
 PUT apt_search
 {
