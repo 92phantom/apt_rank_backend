@@ -77,3 +77,12 @@ systemctl status mariadb
 # maria db restart and check status
 systemctl daemon-reload
 systemctl start mariadb
+
+
+# create user (maria db)
+CREATE USER 'jin'@'%' IDENTIFIED BY '비밀번호';
+
+# grant auth
+GRANT ALL ON apt.*(db name: delete) to 'jin'@'%' (ip 대역폭) IDENTIFIED BY '비밀번호' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
