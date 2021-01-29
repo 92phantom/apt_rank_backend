@@ -12,6 +12,7 @@ import java.util.List;
 public class PriceAnalysisDto {
 
     private String range;
-    private List<PriceChange> price_change;
+    private List<PriceChangeDto> price_change;
+    private List<VolumeChangeDto> volume_change;
 
 }

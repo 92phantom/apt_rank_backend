@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "elasticsearch",
+      "type": "com.apt_rank.springboot.Config.ElasticsearchProperties",
+      "sourceType": "com.apt_rank.springboot.Config.ElasticsearchProperties"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

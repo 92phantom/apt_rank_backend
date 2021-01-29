@@ -28,6 +28,22 @@ public class AptTransPriceHst {
     @Column(length=30, nullable = false)
     private String trans_yymmdd;
 
+    @Id
+    @Column(length=30)
+    private String addr_cd;
+
+    @Id
+    @Column(length=30)
+    private String addr_pr_cd;
+
+    @Id
+    @Column(length=30)
+    private String addr_ct_cd;
+    @Id
+    @Column(length=30)
+    private String addr_dong_cd;
+
+
     @Column(length=30, nullable = false)
     private String apt_name;
 
@@ -42,18 +58,6 @@ public class AptTransPriceHst {
 
     @Column(length=30)
     private String trans_yymm;
-
-    @Column(length=30)
-    private String addr_cd;
-
-    @Column(length=30)
-    private String addr_pr_cd;
-
-    @Column(length=30)
-    private String addr_ct_cd;
-
-    @Column(length=30)
-    private String addr_dong_cd;
 
     @Column(length=30)
     private String addr_dong_nm;

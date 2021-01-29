@@ -15,6 +15,7 @@ public class MyAptDto {
     private String province_nm;
     private String city_nm;
     private String dong_nm;
+    private String apt_name;
     private List<TransHstDto> trans_hst;
 
 }

@@ -29,10 +29,10 @@ public class AptSearchService {
      */
 
         TOP5PER("DIA"),
-        TOP15PER("GOLD"),
+        TOP10PER("GOLD"),
         TOP20PER("SILVER"),
         TOP30PER("BRONZE"),
-        ELSEPER("GLASS");
+        ELSEPER("GRASS");
 
         final private String name;
 
@@ -96,6 +96,14 @@ public class AptSearchService {
         // ADDR_CD 추출
         AptDetail addr_info = aptRankRepository.findAddrCdBySerialNum(serial_num);
 
+        System.out.println("##########debug");
+        System.out.println(addr_info.getAddr_pr_cd());
+        System.out.println(addr_info.getAddr_ct_cd());
+        System.out.println(addr_info.getAddr_dong_cd());
+        System.out.println(addr_info.getAddr_cd());
+        System.out.println(exclusive_area);
+        System.out.println("##########debug");
+
         return findAptDetail(addr_info.getAddr_pr_cd(),
                 addr_info.getAddr_ct_cd(),
                 addr_info.getAddr_dong_cd(),
@@ -149,6 +157,7 @@ public class AptSearchService {
         myAptDto.setProvince_nm(my_apt_dtl.get(0).getProvince_nm());
         myAptDto.setCity_nm(my_apt_dtl.get(0).getCity_nm());
         myAptDto.setDong_nm(my_apt_dtl.get(0).getDong_nm());
+        myAptDto.setApt_name(my_apt_dtl.get(0).getApt_name());
 
         List<TransHstDto> transHstDto = new ArrayList<TransHstDto>();
 
@@ -173,8 +182,6 @@ public class AptSearchService {
         aptSearchDto.setWide_ct_cd(wide_info.get(0).getAddr_ct_cd());
         aptSearchDto.setWide_dong_cd(wide_info.get(0).getAddr_dong_cd());
         aptSearchDto.setWide_addr_cd(wide_info.get(0).getAddr_cd());
-
-        getTierName(wide_cnt.getWide_apt_cnt(), wide_info.get(1).getRank());
 
         // 전국 내 Tier 계산
         /* 내가 전국 1위 일 경우*/
@@ -226,15 +233,19 @@ public class AptSearchService {
 
         int rank_tier = (my_rank * 100) / total_cnt;
 
+        System.err.println("total_cnt"+ total_cnt);
+        System.err.println("my_rank"+ my_rank);
+        System.err.println("rank_tier"+ rank_tier);
+
         String tier_name = "";
 
         if(rank_tier <= 5){
             tier_name = RankType.valueOf("TOP5PER").getName();
         }else if(rank_tier > 5 && rank_tier <= 15){
             tier_name = RankType.valueOf("TOP10PER").getName();
-        }else if(rank_tier > 16 && rank_tier <= 50){
+        }else if(rank_tier > 15 && rank_tier <= 50){
             tier_name = RankType.valueOf("TOP20PER").getName();
-        }else if(rank_tier > 51 && rank_tier <= 85){
+        }else if(rank_tier > 50 && rank_tier <= 85){
             tier_name = RankType.valueOf("TOP30PER").getName();
         }else{
             tier_name = RankType.valueOf("ELSEPER").getName();

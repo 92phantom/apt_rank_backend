@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PriceChange {
+public class PriceChangeDto {
 
     private String trans_yymm;
     private String trans_price;

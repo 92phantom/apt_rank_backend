@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface AptSubsSpcRepository extends JpaRepository<AptSubsSpc, String> {
 
-    List<AptSubsSpc> findScheduleByInqirePd(String inqirePd);
+    @Query(value = "SELECT * FROM apt_subs_spc WHERE inqirepd = ?1", nativeQuery = true)
+    List<AptSubsSpc> findScheduleByInqirepd(String inqirepd);
+
+    @Query(value = "SELECT * FROM apt_subs_spc WHERE inqirepd = ?1 AND rcept_se = ?2", nativeQuery = true)
+    List<AptSubsSpc> findScheduleByInqirepdAndRcept(String inqirepd, String rcept_se);
 
 }

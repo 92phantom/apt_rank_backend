@@ -1,6 +1,7 @@
 package com.apt_rank.springboot.web;
 
 import com.apt_rank.springboot.domain.apt.AptSubsSpc;
+import com.apt_rank.springboot.domain.apt.projection.AptSoaring;
 import com.apt_rank.springboot.domain.search.AptSearch;
 import com.apt_rank.springboot.domain.search.projection.TopRankInterface;
 import com.apt_rank.springboot.service.*;
@@ -21,12 +22,12 @@ import java.util.List;
 public class Controller {
 
     private final AptSearchService aptSearchService;
+    private final AptAnalysisService aptAnalysisService;
     private final SearchLogService searchLogService;
     private final ElasticsearchService elasticsearchService;
     private final AptScheduleService aptScheduleService;
     private final AptCalculatorService aptCalculatorService;
-
-
+    private final AptSoaringService aptSoaringService;
     /*  1. 인기 검색어
             1-1. 인기 검색 상위 10개 아파트 리스트 검색
             기준 기간 - 14일 누적 검색
@@ -94,11 +95,6 @@ public class Controller {
             @RequestParam(value = "addr_cd",    required = false)   String addr_cd,
             @RequestParam(value = "exclusive_area", required = true) int exclusive_area) {
 
-
-        System.out.println("hihi");
-
-        System.out.println("#"+exclusive_area);
-
         if(exclusive_area == 0){
             return null;
         }
@@ -154,6 +150,7 @@ public class Controller {
     public PriceAnalysisDto analysisArea(@RequestParam(value = "range" , required = true)   String range,
                                          @RequestParam(value = "year"  , required = true)   String year){
 
+        return aptAnalysisService.localChange(range, year);
 
     }
 
@@ -164,11 +161,18 @@ public class Controller {
      */
 
     @RequestMapping(value = "/analysis/volume")
-    public List<TopRankInterface> analysisPrice(@RequestParam(value = "range" , required = true)   String range,
+    public List<TransRankDto> analysisPrice(@RequestParam(value = "range" , required = true)   String range,
                                       @RequestParam(value = "related"  , required = true)   String related){
 
+        return aptAnalysisService.volumeRank(range, related);
 
     }
+
+    /*
+        7. 랭킹
+     */
+//    @RequestMapping(value = "rank")
+//    public
 
     /*
         5. 청약캘린더
@@ -178,7 +182,14 @@ public class Controller {
     public List<AptSubsSpc> scheduleCalendar(@RequestParam(value = "date") String date,
                 @RequestParam(value = "type") String type){
         // 일자별로 조회될수 있도록 조건 추가
-        return aptScheduleService.findScheduleByInqirePd(date);
+
+        if(date.length() == 6){
+            return aptScheduleService.findScheduleByInqirePd(date, type);
+        }
+
+        else{
+            return null;
+        }
     }
 
     /*
@@ -216,4 +227,12 @@ public class Controller {
         return new LoanDto();
 
     }
+    /*
+        8. 검색 이후 급상승 순위
+     */
+    @RequestMapping(value = "/search/soaring")
+    public List<AptSoaring> soaringRank(){
+        return aptSoaringService.findAptSoaring();
+    }
+
 }

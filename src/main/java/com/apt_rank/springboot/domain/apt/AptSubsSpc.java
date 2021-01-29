@@ -18,7 +18,7 @@ public class AptSubsSpc {
 
     @Id
     @Column(length=45, nullable = false)
-    private int house_secd;
+    private String house_secd;
 
     @Column(length=100, nullable = false)
     private String house_nm;
@@ -42,7 +42,7 @@ public class AptSubsSpc {
     private String house_manage_no;
 
     @Column(length=6)
-    private String inqirePd;
+    private String inqirepd;
 
     @Column(nullable = false)
     private Date audit_dtm;
