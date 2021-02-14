@@ -29,7 +29,6 @@ public class AptAnalysisService {
 
     ConcurrentHashMap<Trans_key, List<TransRankDto>> curTransRank = new ConcurrentHashMap<>();
 
-
     public PriceAnalysisDto localChange(String range, String year) {
 
         Calendar cal = Calendar.getInstance();
@@ -48,6 +47,8 @@ public class AptAnalysisService {
 
         List<PriceChange> priceChanges;
         List<VolumeChange> volumeChanges;
+
+        System.err.println(range+"!@#range");
 
         if (range.equals("00")) {
             priceChanges = aptRankRepository.findAllTransAmount(start_dt);
@@ -142,7 +143,7 @@ public class AptAnalysisService {
             Trans_key t_k = it.next();
             if (t_k.getCurrent_dt().equals(current_dt) && t_k.getRange().equals(range)) {
                 System.err.println("자료 있어요");
-//                return curTransRank.get(t_k);
+                return curTransRank.get(t_k);
 
             }
         }

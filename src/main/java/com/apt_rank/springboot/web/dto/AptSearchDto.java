@@ -20,6 +20,7 @@ public class AptSearchDto {
     private String wide_ct_cd;
     private String wide_dong_cd;
     private String wide_addr_cd;
+    private int wide_unit_price;
 
     private String local_top_nm;
     private String local_top_serial_num;
@@ -27,6 +28,8 @@ public class AptSearchDto {
     private String local_top_ct_cd;
     private String local_top_dong_cd;
     private String local_top_addr_cd;
+    private int local_unit_price;
+
     private int local_my_rank;
     private String local_my_tier;
 

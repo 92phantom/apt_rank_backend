@@ -20,4 +20,9 @@ public interface AptSoaring {
 
     String getMax_trans_price();
     Integer getExclusive_area();
+
+    Integer getMax_unit_price();
+    Integer getMin_unit_price();
+
+
 }

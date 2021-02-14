@@ -12,6 +12,7 @@ public interface AptDetail {
     Integer getWide_apt_cnt();
     Integer getLocal_apt_cnt();
 
+    Integer getUnit_price();
 
     String getApt_floor();
     String getTrans_yymmdd();
@@ -28,5 +29,7 @@ public interface AptDetail {
     Integer getLocal_rank();
 
     String getTrans_price();
+
+    String getMax_trans_price();
 
 }

@@ -31,12 +31,29 @@ public class SearchLog {
     @Column(nullable = false)
     private Date    audit_dtm;
 
+    @Column(nullable = false)
+    private String  pr_cd;
+
+    @Column(nullable = false)
+    private String  ct_cd;
+
+    @Column(nullable = false)
+    private String  dong_cd;
+
+    @Column(nullable = false)
+    private String  addr_cd;
+
+
     @Builder
     public SearchLog(
             String client_ip
             , String port
             , String serial_num
             , int exclusive_area
+            , String pr_cd
+            , String ct_cd
+            , String dong_cd
+            , String addr_cd
             , Date audit_dtm)
     {
         this.client_ip = client_ip;
@@ -44,5 +61,9 @@ public class SearchLog {
         this.serial_num = serial_num;
         this.exclusive_area = exclusive_area;
         this.audit_dtm = new Date(System.currentTimeMillis());
+        this.pr_cd = pr_cd;
+        this.ct_cd = ct_cd;
+        this.dong_cd = dong_cd;
+        this.addr_cd = addr_cd;
     }
 }

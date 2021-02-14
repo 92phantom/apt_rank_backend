@@ -2,16 +2,19 @@ package com.apt_rank.springboot.service;
 
 import com.apt_rank.springboot.domain.apt.AptRankRepository;
 import com.apt_rank.springboot.domain.apt.projection.AptDetail;
+import com.apt_rank.springboot.domain.apt.projection.AptVolumeRank;
 import com.apt_rank.springboot.domain.apt.projection.ExclusiveInterface;
-import com.apt_rank.springboot.web.dto.AptExclusiveDto;
-import com.apt_rank.springboot.web.dto.AptSearchDto;
-import com.apt_rank.springboot.web.dto.MyAptDto;
-import com.apt_rank.springboot.web.dto.TransHstDto;
+import com.apt_rank.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -158,6 +161,8 @@ public class AptSearchService {
         myAptDto.setCity_nm(my_apt_dtl.get(0).getCity_nm());
         myAptDto.setDong_nm(my_apt_dtl.get(0).getDong_nm());
         myAptDto.setApt_name(my_apt_dtl.get(0).getApt_name());
+        myAptDto.setMax_trans_price(my_apt_dtl.get(0).getMax_trans_price());
+
 
         List<TransHstDto> transHstDto = new ArrayList<TransHstDto>();
 
@@ -182,6 +187,7 @@ public class AptSearchService {
         aptSearchDto.setWide_ct_cd(wide_info.get(0).getAddr_ct_cd());
         aptSearchDto.setWide_dong_cd(wide_info.get(0).getAddr_dong_cd());
         aptSearchDto.setWide_addr_cd(wide_info.get(0).getAddr_cd());
+        aptSearchDto.setWide_unit_price(wide_info.get(0).getUnit_price());
 
         // 전국 내 Tier 계산
         /* 내가 전국 1위 일 경우*/
@@ -190,12 +196,15 @@ public class AptSearchService {
             aptSearchDto.setWide_my_tier(
                     getTierName(wide_cnt.getWide_apt_cnt(), wide_info.get(0).getRank())
             );
+            myAptDto.setUnit_price(wide_info.get(0).getUnit_price());
+
         }
         else{
             aptSearchDto.setWide_my_rank(wide_info.get(1).getRank());
             aptSearchDto.setWide_my_tier(
                     getTierName(wide_cnt.getWide_apt_cnt(), wide_info.get(1).getRank())
             );
+            myAptDto.setUnit_price(wide_info.get(1).getUnit_price());
 
         }
 
@@ -206,6 +215,7 @@ public class AptSearchService {
         aptSearchDto.setLocal_top_ct_cd(local_info.get(0).getAddr_ct_cd());
         aptSearchDto.setLocal_top_dong_cd(local_info.get(0).getAddr_dong_cd());
         aptSearchDto.setLocal_top_addr_cd(local_info.get(0).getAddr_cd());
+        aptSearchDto.setLocal_unit_price(local_info.get(0).getUnit_price());
 
         // 지역 내 Tier 계산
         /* 내가 지역 1위 일 경우*/
@@ -233,10 +243,6 @@ public class AptSearchService {
 
         int rank_tier = (my_rank * 100) / total_cnt;
 
-        System.err.println("total_cnt"+ total_cnt);
-        System.err.println("my_rank"+ my_rank);
-        System.err.println("rank_tier"+ rank_tier);
-
         String tier_name = "";
 
         if(rank_tier <= 5){
@@ -253,5 +259,64 @@ public class AptSearchService {
 
         return tier_name;
     }
+
+
+    public AptRankDto findAptRankByPage(int period, String range, String st_exclusive_area, String end_exclusive_area, int page){
+
+
+        int st_page = 0;
+        int end_page = 0;
+
+        end_page = page * 10;
+        st_page = end_page - 9;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        DateFormat df = new SimpleDateFormat("yyyyMM");
+
+        cal.add(Calendar.MONTH, -period);
+
+        String start_dt = df.format(cal.getTime());
+
+
+
+        List<AptVolumeRank> aptVolumeRanks;
+
+
+        if(range.equals("00")){
+            aptVolumeRanks = aptRankRepository.findAptRankAllByPage(start_dt, st_exclusive_area, end_exclusive_area, st_page, end_page);
+        }
+        else{
+            aptVolumeRanks = aptRankRepository.findAptRankByPage(start_dt, range, st_exclusive_area, end_exclusive_area, st_page, end_page);
+        }
+
+        List<AptRankDtlDto> aptRankDtlDtos = new ArrayList<>();
+
+        for(int i=0; i<aptVolumeRanks.size(); i++){
+            AptRankDtlDto aptRankDtlDto = new AptRankDtlDto();
+
+            aptRankDtlDto.setRank(aptVolumeRanks.get(i).getRank());
+            aptRankDtlDto.setAddr_cd(aptVolumeRanks.get(i).getAddr_cd());
+            aptRankDtlDto.setApt_name(aptVolumeRanks.get(i).getApt_name());
+            aptRankDtlDto.setPr_cd(aptVolumeRanks.get(i).getAddr_pr_cd());
+            aptRankDtlDto.setProvince_nm(aptVolumeRanks.get(i).getProvince_nm());
+            aptRankDtlDto.setCt_cd(aptVolumeRanks.get(i).getAddr_ct_cd());
+            aptRankDtlDto.setCity_nm(aptVolumeRanks.get(i).getCity_nm());
+            aptRankDtlDto.setDong_cd(aptVolumeRanks.get(i).getAddr_dong_cd());
+            aptRankDtlDto.setDong_nm(aptVolumeRanks.get(i).getDong_nm());
+            aptRankDtlDto.setSerial_num(aptVolumeRanks.get(i).getSerial_num());
+            aptRankDtlDto.setExclusive_area(aptVolumeRanks.get(i).getExclusive_area());
+            aptRankDtlDto.setMax_trans_price(aptVolumeRanks.get(i).getMax_trans_price());
+            aptRankDtlDtos.add(aptRankDtlDto);
+
+        }
+
+        AptRankDto aptRankDto = new AptRankDto();
+        aptRankDto.setPage(page);
+        aptRankDto.setRank_dtl(aptRankDtlDtos);
+
+        return aptRankDto;
+    }
+
 
 }

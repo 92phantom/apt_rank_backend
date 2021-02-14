@@ -1,6 +1,5 @@
 package com.apt_rank.springboot.web;
 
-import com.apt_rank.springboot.domain.apt.AptSubsSpc;
 import com.apt_rank.springboot.domain.apt.projection.AptSoaring;
 import com.apt_rank.springboot.domain.search.AptSearch;
 import com.apt_rank.springboot.domain.search.projection.TopRankInterface;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -44,8 +42,6 @@ public class Controller {
     @RequestMapping("/search")
     public Mono<List<AptSearch>> searchAptList(@RequestParam(value = "apt_name") String apt_name,
                                                @RequestParam(value = "related") int related_rank) {
-
-        System.out.println("###"+ apt_name);
 
         apt_name = apt_name.replaceAll(" ","");
 
@@ -103,7 +99,6 @@ public class Controller {
         if(serial_num != null   &&
                     exclusive_area != 0){
 
-            System.out.println("here we go");
             return aptSearchService.findAptDetailBySerialNum(serial_num, exclusive_area);
         }
 
@@ -130,6 +125,8 @@ public class Controller {
             , method=RequestMethod.POST)
     public ResponseEntity<?> searchLog(@ModelAttribute final SearchLogDto requestParam,
                             HttpServletRequest request) {
+
+        System.err.println(requestParam.getAddr_cd());
 
         boolean save_flag = searchLogService.saveSearchLog(requestParam);
 
@@ -168,18 +165,13 @@ public class Controller {
 
     }
 
-    /*
-        7. 랭킹
-     */
-//    @RequestMapping(value = "rank")
-//    public
 
     /*
         5. 청약캘린더
      */
 
     @RequestMapping(value = "/schedule")
-    public List<AptSubsSpc> scheduleCalendar(@RequestParam(value = "date") String date,
+    public List<ScheduleDto> scheduleCalendar(@RequestParam(value = "date") String date,
                 @RequestParam(value = "type") String type){
         // 일자별로 조회될수 있도록 조건 추가
 
@@ -231,8 +223,30 @@ public class Controller {
         8. 검색 이후 급상승 순위
      */
     @RequestMapping(value = "/search/soaring")
-    public List<AptSoaring> soaringRank(){
+    public List<AptSoaringDto> soaringRank(){
         return aptSoaringService.findAptSoaring();
+    }
+
+    /*
+        9. 랭킹
+     */
+
+    @RequestMapping(value = "/rank")
+    public AptRankDto aptRanking(@RequestParam(value = "period", required = true) int period,
+                                 @RequestParam(value = "range", required = true) String range,
+                                 @RequestParam(value = "exclusive_cd", required = true) int exclusive_cd,
+                                 @RequestParam(value = "page", required = true) int page){
+
+
+        String st_exclusive_area = "";
+        String end_exclusive_area = "";
+
+        st_exclusive_area = Math.round((exclusive_cd -1 )* 10 * 3.3 - 20)+"";
+        end_exclusive_area =  Math.round(exclusive_cd * 10 * 3.3 - 20)+"";
+
+
+        return aptSearchService.findAptRankByPage(period, range, st_exclusive_area, end_exclusive_area, page);
+
     }
 
 }
